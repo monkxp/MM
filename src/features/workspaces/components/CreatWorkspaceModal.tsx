@@ -24,7 +24,7 @@ export default function CreateWorkspaceModal({
   userId: string | undefined;
 }) {
   const [workspaceName, setWorkspaceName] = useState("");
-  const { create, isPending } = useCreateWorkspace();
+  const { mutate: create, isPending } = useCreateWorkspace();
   const router = useRouter();
   const handleCreateWorkspace = async () => {
     await create(

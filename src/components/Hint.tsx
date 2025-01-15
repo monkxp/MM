@@ -17,7 +17,7 @@ export default function Hint({
   align?: "start" | "center" | "end";
 }) {
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent

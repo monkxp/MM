@@ -20,14 +20,14 @@ export default function ChannelSideBarHeader({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="flex items-center justify-between px-4 py-2 h-[49px]">
+    <div className="flex h-[49px] items-center justify-between px-4 py-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="transparent"
-            className="p-1.5 w-auto overflow-hidden"
+            className="w-auto overflow-hidden p-1.5"
           >
-            <span className="text-white font-semibold text-lg truncate">
+            <span className="truncate text-lg font-semibold text-white">
               {workspace.name}
             </span>
             <ChevronDown className="size-4 shrink-0" />
@@ -35,12 +35,12 @@ export default function ChannelSideBarHeader({
         </DropdownMenuTrigger>
         <DropdownMenuContent side="bottom" align="start" className="w-72">
           <DropdownMenuItem className="cursor-pointer capitalize">
-            <div className="flex items-center justify-center mr-2 text-white bg-[#616161]  rounded-md font-semibold text-lg w-10 h-10">
+            <div className="mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-[#616161] text-lg font-semibold text-white">
               {workspace.name.slice(0, 1).toUpperCase()}
             </div>
             <span className="flex flex-col justify-start">
-              <p className="font-semibold truncate">{workspace.name}</p>
-              <p className=" text-xs text-muted-foreground">active workspace</p>
+              <p className="truncate font-semibold">{workspace.name}</p>
+              <p className="text-xs text-muted-foreground">active workspace</p>
             </span>
           </DropdownMenuItem>
 

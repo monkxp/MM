@@ -23,7 +23,9 @@ export default function WorkspaceSwitcher() {
   const { data: workspaces } = useGetWorkspaces();
   const router = useRouter();
   const { user } = useAuth() as AuthContextType;
-  const filteredWorkspaces = workspaces?.filter((w) => w.id !== workspaceId);
+  const filteredWorkspaces = workspaces?.data?.filter(
+    (w: any) => w.id !== workspaceId
+  );
 
   return (
     <>
@@ -47,7 +49,7 @@ export default function WorkspaceSwitcher() {
             {workspace?.name}
             <span className="text-xs text-gray-500">current workspace</span>
           </DropdownMenuItem>
-          {filteredWorkspaces?.map((workspace) => (
+          {filteredWorkspaces?.map((workspace: any) => (
             <DropdownMenuItem
               key={workspace.id}
               className="flex-row justify-start items-center cursor-pointer capitalize overflow-hidden"

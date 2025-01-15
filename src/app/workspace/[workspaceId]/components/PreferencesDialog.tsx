@@ -25,8 +25,9 @@ export default function PreferencesDialog({
   workspace: any;
 }) {
   const [name, setName] = useState(workspace.name);
-  const { update, isPending } = useUpdateWorkspaceName();
-  const { delWorkspace, isPending: isPendingDelete } = useDeleteWorkspace();
+  const { mutate: update, isPending } = useUpdateWorkspaceName();
+  const { mutate: delWorkspace, isPending: isPendingDelete } =
+    useDeleteWorkspace();
   const router = useRouter();
 
   const [ConfirmDialog, confirm] = useConfirm(
@@ -35,18 +36,21 @@ export default function PreferencesDialog({
   );
 
   const handleUpdate = async () => {
-    await update(workspace.id, name, {
-      onSuccess: (res) => {
-        if (res) {
-          const { name } = res;
-          setName(name);
-        }
-        toast.success("Workspace name updated");
-      },
-      onError: (error) => {
-        toast.error(error.message);
-      },
-    });
+    await update(
+      { workspaceId: workspace.id, name },
+      {
+        onSuccess: (res) => {
+          if (res) {
+            const { name } = res;
+            setName(name);
+          }
+          toast.success("Workspace name updated");
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
+      }
+    );
   };
   const handleDelete = async () => {
     const isDelete = await confirm();
