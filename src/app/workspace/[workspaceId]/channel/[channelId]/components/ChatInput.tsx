@@ -20,6 +20,7 @@ export default function ChatInput() {
   const { mutate: sendMessage } = useSendMessage();
   const channelId = useChannelId();
   const { mutate: removeFile } = useRemoveFile();
+
   const handleSendMessage = () => {
     const content: MessageType = {
       message: message,
@@ -38,7 +39,7 @@ export default function ChatInput() {
           setMessage("");
           setUploadFiles([]);
         },
-      }
+      },
     );
   };
 
@@ -68,7 +69,7 @@ export default function ChatInput() {
         onSuccess: () => {
           setUploadFiles((prev) => prev.filter((f) => f.id !== file.id));
         },
-      }
+      },
     );
   };
 

@@ -62,7 +62,7 @@ export const getWorkspaces = async (userId: string) => {
 
   const workspaces = data?.filter((workspace) => {
     const member = members?.find(
-      (member) => member.workspace_id === workspace.id
+      (member) => member.workspace_id === workspace.id,
     );
     if (member) {
       return { ...workspace, role: member.role };
@@ -105,7 +105,7 @@ export const getWorkspace = async (workspaceId: string, userId: string) => {
 
 export const getWorkspaceMember = async (
   workspaceId: string,
-  userId: string
+  userId: string,
 ) => {
   if (!userId) {
     return null;
@@ -124,7 +124,7 @@ export const getWorkspaceMember = async (
 export const updateWorkspaceName = async (
   workspaceId: string,
   userId: string,
-  name: string
+  name: string,
 ) => {
   if (!userId) {
     throw new Error("Unauthorized");
@@ -199,7 +199,7 @@ export const deleteWorkspace = async (workspaceId: string, userId: string) => {
 
 export const getChannels = async (
   workspaceId: string,
-  userId: string
+  userId: string,
 ): Promise<{ data: Tables<"channels">[]; error: string }> => {
   if (!userId) {
     return { data: [], error: "Unauthorized" };
@@ -234,7 +234,7 @@ export const getChannels = async (
 export const getChannel = async (
   workspaceId: string,
   channelId: string,
-  userId: string
+  userId: string,
 ) => {
   if (!userId) {
     return { data: null, error: "Unauthorized" };
@@ -273,7 +273,7 @@ export const getChannel = async (
 export const createMessage = async (
   channelId: string,
   userId: string,
-  content: string
+  content: string,
 ) => {
   const contentObj = JSON.parse(content as string);
   if (contentObj.attachments) {
@@ -283,7 +283,7 @@ export const createMessage = async (
           .from("slack_clone")
           .move(
             attachment.path,
-            attachment.path.replace("unused/", "messages/")
+            attachment.path.replace("unused/", "messages/"),
           );
         if (error) {
           throw new Error(error.message);
@@ -291,7 +291,7 @@ export const createMessage = async (
         attachment.path = attachment.path.replace("unused/", "messages/");
         attachment.publicUrl = attachment.publicUrl.replace(
           "unused/",
-          "messages/"
+          "messages/",
         );
       }
     }

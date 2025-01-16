@@ -14,7 +14,7 @@ export interface AuthContextType {
   loading: boolean;
   signIn: (
     email: string,
-    password: string
+    password: string,
   ) => Promise<
     | {
         user: User;
@@ -25,14 +25,14 @@ export interface AuthContextType {
   >;
   signUp: (
     email: string,
-    password: string
+    password: string,
   ) => Promise<{ user: User | null; session: Session | null } | undefined>;
   signOut: () => Promise<void>;
   signInWithGithub: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
+  undefined,
 );
 
 interface AuthProviderProps {
