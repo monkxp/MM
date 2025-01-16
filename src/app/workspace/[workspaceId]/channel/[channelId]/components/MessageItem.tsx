@@ -15,8 +15,10 @@ export default function MessageItem({
   const { data: user, isError, isPending } = useGetUser(message.user_id || "");
   if (isPending) return;
   if (isError) return;
-
-  const content = JSON.parse(message.content as string);
+  let content: any = message.content;
+  if (typeof content === "string") {
+    content = JSON.parse(message.content as string);
+  }
   return (
     <div className="flex flex-row gap-4">
       {showHeader && (

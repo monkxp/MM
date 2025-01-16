@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import useChannelId from "@/app/hooks/useChannelId";
 import useChannelMessageChange from "@/features/channels/api/useChannelMessageChange";
 import useGetChannelMessage from "@/features/channels/api/useGetChannelMessage";
@@ -5,7 +7,9 @@ import { Tables } from "@/lib/schema";
 import { useEffect } from "react";
 import { useRef } from "react";
 import MessageGroup from "./MessageGroup";
-import { formatDateHeader } from "@/lib/utils";
+import { cn, formatDateHeader } from "@/lib/utils";
+import { Loader } from "lucide-react";
+import { useLayoutEffect } from "react";
 
 interface MessageGroup {
   date: string;
@@ -30,6 +34,9 @@ const groupMessagesByDate = (
 };
 
 export default function MessageList() {
+  const [messages, setMessages] = useState<Tables<"messages">[]>([]);
+  const [newMessageArrived, setNewMessageArrived] = useState(false);
+
   const channelId = useChannelId();
   const { data, isError, isPending } = useGetChannelMessage(channelId);
   const { type, message, error } = useChannelMessageChange(channelId);
@@ -38,30 +45,56 @@ export default function MessageList() {
 
   const handleScroll = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      setTimeout(() => {
+        if (scrollRef.current) {
+          scrollRef.current.classList.add("no-scroll-animation");
+          const maxScroll =
+            scrollRef.current.scrollHeight - scrollRef.current.clientHeight;
+          scrollRef.current.scrollTop = maxScroll;
+          scrollRef.current.classList.remove("no-scroll-animation");
+        }
+      }, 300);
     }
   };
 
   useEffect(() => {
-    if (type === "INSERT") {
+    if (data?.data) {
+      setMessages(data.data);
+    }
+
+    if (type === "INSERT" && message) {
+      setMessages((prevMessages) => [...prevMessages, message]);
+      setNewMessageArrived(true);
       handleScroll();
     }
-  }, [type, message]);
+  }, [type, message, data?.data]);
 
-  if (isPending) return <div>Loading...</div>;
+  useLayoutEffect(() => {
+    if (!isPending && data?.data) {
+      handleScroll();
+    }
+  }, [isPending, data?.data]);
+
+  if (isPending)
+    return (
+      <div className="flex h-full flex-col items-center justify-center bg-[#5E2C5E] text-white">
+        <Loader className="size-6" />
+        <p className="text-sm text-white">Loading...</p>
+      </div>
+    );
   if (isError) return <div>Error</div>;
   if (error) return <div>Error</div>;
 
-  const groupedMessages = groupMessagesByDate(data?.data || []);
+  const groupedMessages = groupMessagesByDate(messages || []);
 
   return (
-    <div className="overflow-y-auto">
+    <div
+      ref={scrollRef}
+      className={cn("overflow-y-auto", newMessageArrived && "scroll-smooth")}
+      style={{ height: "calc(100vh - 200px)" }}
+    >
       {groupedMessages.map((group) => (
-        <div
-          ref={scrollRef}
-          key={group.date}
-          className="mt-6 border-t border-gray-200"
-        >
+        <div key={group.date} className="mt-6 border-t border-gray-200">
           <div className="sticky top-5 z-10 items-center py-2">
             <div className="relative flex items-center justify-center">
               <div className="absolute -top-[22px] rounded-full border bg-white px-4 py-1 text-xs text-gray-500">
