@@ -20,9 +20,9 @@ export default function UserButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar className="size-10 hover:opacity-80 cursor-pointer transition ">
+        <Avatar className="size-10 cursor-pointer rounded-md transition hover:opacity-80">
           <AvatarImage src={user?.user_metadata?.avatar_url} />
-          <AvatarFallback className="text-white bg-[#160616] text-lg">
+          <AvatarFallback className="bg-[#160616] text-lg text-white">
             {user?.email?.[0].toUpperCase()}
           </AvatarFallback>
         </Avatar>

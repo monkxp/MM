@@ -1,15 +1,13 @@
-import { useState } from "react";
+import { useLayoutEffect, useEffect, useState, useRef } from "react";
 
 import useChannelId from "@/app/hooks/useChannelId";
 import useChannelMessageChange from "@/features/channels/api/useChannelMessageChange";
 import useGetChannelMessage from "@/features/channels/api/useGetChannelMessage";
 import { Tables } from "@/lib/schema";
-import { useEffect } from "react";
-import { useRef } from "react";
-import MessageGroup from "./MessageGroup";
 import { cn, formatDateHeader } from "@/lib/utils";
 import { Loader } from "lucide-react";
-import { useLayoutEffect } from "react";
+
+import MessageGroup from "./MessageGroup";
 
 interface MessageGroup {
   date: string;

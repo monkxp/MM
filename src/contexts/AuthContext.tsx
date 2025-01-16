@@ -64,6 +64,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const response = await supabase?.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            name: email.split("@")[0] || "",
+          },
+        },
       });
       if (response?.error) {
         throw new Error(response.error.message);

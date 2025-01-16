@@ -15,7 +15,7 @@ export default function SignUpCard({
   setFlow: (flow: AuthFlow) => void;
   signUp: (
     email: string,
-    password: string
+    password: string,
   ) => Promise<{ user: User | null; session: Session | null } | undefined>;
 }) {
   const [email, setEmail] = useState("");
@@ -42,7 +42,7 @@ export default function SignUpCard({
   };
 
   return (
-    <Card className="w-full h-full p-8">
+    <Card className="h-full w-full p-8">
       <CardHeader className="px-0 pt-0">
         <CardTitle>Sign Up</CardTitle>
       </CardHeader>
@@ -80,7 +80,7 @@ export default function SignUpCard({
         <p className="text-sm text-muted-foreground">
           Already have an account?{" "}
           <span
-            className="text-sky-500 hover:underline cursor-pointer"
+            className="cursor-pointer text-sky-500 hover:underline"
             onClick={() => setFlow({ flow: "signin" })}
           >
             Sign in
