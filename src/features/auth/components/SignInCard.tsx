@@ -9,14 +9,11 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Session, WeakPassword } from "@supabase/supabase-js";
 import { User } from "@supabase/supabase-js";
-import { useEffect } from "react";
-import { AuthContextType, useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import { signInAction } from "@/app/(auth-pages)/actions";
 export default function SignInCard({
   setFlow,
   signIn,
-  signInWithGithub,
 }: {
   setFlow: (flow: AuthFlow) => void;
   signIn: (
@@ -59,14 +56,6 @@ export default function SignInCard({
       },
     });
   };
-  const { user } = useAuth() as AuthContextType;
-
-  // useEffect(() => {
-  //   if (user) {
-  //     console.log("login in user:", user);
-  //     router.push("/");
-  //   }
-  // }, [user]);
 
   return (
     <form>

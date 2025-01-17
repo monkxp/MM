@@ -56,7 +56,7 @@ export default function MessageList() {
   };
 
   useEffect(() => {
-    if (data?.data) {
+    if (data?.data && !newMessageArrived) {
       setMessages(data.data);
     }
 
@@ -65,6 +65,7 @@ export default function MessageList() {
       setNewMessageArrived(true);
       handleScroll();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, message, data?.data]);
 
   useLayoutEffect(() => {
