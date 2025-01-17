@@ -2,7 +2,7 @@
 import { useState } from "react";
 import SignInCard from "./SignInCard";
 import SignUpCard from "./SignUpCard";
-import { AuthFlow } from "@/app/auth/types";
+import { AuthFlow } from "@/app/(auth-pages)/types";
 import { AuthContextType, useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 export default function AuthScreen() {
@@ -17,7 +17,7 @@ export default function AuthScreen() {
   const { signIn, signUp, signInWithGithub } = useAuth() as AuthContextType;
 
   return (
-    <div className="h-screen flex items-center justify-center bg-[#5c3B58]">
+    <div className="flex h-screen items-center justify-center bg-[#5c3B58]">
       <div className="md:h-auto md:w-[400px]">
         {flow.flow === "signin" ? (
           <SignInCard

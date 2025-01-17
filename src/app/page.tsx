@@ -32,9 +32,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      {workspaceId ? (
-        <div>Workspaces</div>
-      ) : (
+      {!workspaceId && (
         <CreateWorkspaceModal
           isOpen={isOpen}
           setIsOpen={setIsOpen}

@@ -1,4 +1,4 @@
-import useGetUser from "@/app/auth/api/useUser";
+import useGetUser from "@/app/(auth-pages)/api/useUser";
 import { Tables } from "@/lib/schema";
 import { formatTime } from "@/lib/utils";
 
