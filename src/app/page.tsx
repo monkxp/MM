@@ -17,9 +17,6 @@ export default function Dashboard() {
     return data?.data?.[0]?.id;
   }, [data]);
   useEffect(() => {
-    if (!user && !loading) {
-      router.push("/auth");
-    }
     if (isPending) {
       return;
     }

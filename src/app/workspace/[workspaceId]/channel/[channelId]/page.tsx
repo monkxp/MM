@@ -15,14 +15,14 @@ export default function ChannelPage() {
 
   if (isPending) {
     return (
-      <div className="flex items-center justify-center h-full bg-[#5E2C5E] text-white">
+      <div className="flex h-full items-center justify-center bg-[#5E2C5E] text-white">
         <Loader className="animate-spin" />
       </div>
     );
   }
   if (!data || isError) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-[#5E2C5E] text-white">
+      <div className="flex h-full flex-col items-center justify-center bg-[#5E2C5E] text-white">
         <AlertTriangle className="size-6" />
         <p className="text-sm text-white">Channel not found</p>
       </div>
@@ -30,7 +30,7 @@ export default function ChannelPage() {
   }
   if (data.error) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-[#5E2C5E] text-white">
+      <div className="flex h-full flex-col items-center justify-center bg-[#5E2C5E] text-white">
         <AlertTriangle className="size-6" />
         <p className="text-sm text-white">{data.error}</p>
       </div>
@@ -38,11 +38,11 @@ export default function ChannelPage() {
   }
 
   return (
-    <div className="flex flex-col p-3 h-full w-full">
+    <div className="flex h-full w-full flex-col">
       <ChannelHeader channel={data.data!} />
       <MessageList />
-      <div className="px-3 mt-auto">
-        <div className="border border-gray-200 rounded-md p-2">
+      <div className="mt-auto px-5 py-3">
+        <div className="rounded-md border border-gray-200 p-2">
           <ChatInput />
         </div>
       </div>

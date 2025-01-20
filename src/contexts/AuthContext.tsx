@@ -6,29 +6,13 @@ import React, {
   useContext,
   ReactNode,
 } from "react";
-import supabase from "../lib/supabaseClient";
-import { User, Session, WeakPassword } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
-  signIn: (
-    email: string,
-    password: string,
-  ) => Promise<
-    | {
-        user: User;
-        session: Session;
-        weakPassword?: WeakPassword;
-      }
-    | undefined
-  >;
-  signUp: (
-    email: string,
-    password: string,
-  ) => Promise<{ user: User | null; session: Session | null } | undefined>;
   signOut: () => Promise<void>;
-  signInWithGithub: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -42,7 +26,7 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const supabase = createClient();
   useEffect(() => {
     const fetchSession = async () => {
       await supabase?.auth.getSession();
@@ -57,48 +41,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     fetchSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const signUp = async (email: string, password: string) => {
-    try {
-      const response = await supabase?.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name: email.split("@")[0] || "",
-          },
-        },
-      });
-      if (response?.error) {
-        throw new Error(response.error.message);
-      }
-      if (response?.data?.user) {
-        setUser(response.data.user);
-        return response.data;
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      const response = await supabase?.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (response?.error) {
-        throw new Error(response.error.message);
-      }
-      if (response?.data?.user) {
-        setUser(response.data.user);
-        return response.data;
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const signOut = async () => {
     const response = await supabase?.auth.signOut();
@@ -108,23 +52,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(null);
   };
 
-  const signInWithGithub = async () => {
-    const response = await supabase?.auth.signInWithOAuth({
-      provider: "github",
-    });
-    console.log("signInWithGithub response:", response);
-    if (response?.error) {
-      throw new Error(response.error.message);
-    }
-  };
-
   const value: AuthContextType = {
     user,
     loading,
-    signIn,
-    signUp,
     signOut,
-    signInWithGithub,
   };
 
   return (

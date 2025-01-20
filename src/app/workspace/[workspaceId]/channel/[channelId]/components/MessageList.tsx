@@ -93,7 +93,7 @@ export default function MessageList() {
       style={{ height: "calc(100vh - 200px)" }}
     >
       {groupedMessages.map((group) => (
-        <div key={group.date} className="mt-6 border-t border-gray-200">
+        <div key={group.date} className="mt-6 border-t border-gray-200 px-0">
           <div className="sticky top-5 z-10 items-center py-2">
             <div className="relative flex items-center justify-center">
               <div className="absolute -top-[22px] rounded-full border bg-white px-4 py-1 text-xs text-gray-500">

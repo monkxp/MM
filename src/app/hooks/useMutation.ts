@@ -21,7 +21,7 @@ type OptionCallbacks = {
 export default function useMutation<
   TData = unknown,
   TVariables = unknown,
-  TError = unknown
+  TError = unknown,
 >({
   mutateFn,
   select,

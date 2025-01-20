@@ -1,10 +1,13 @@
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
-import { XIcon } from "lucide-react";
 import { AttachmentType } from "./ToolBar";
-import Hint from "@/components/Hint";
-import { Button } from "@/components/ui/button";
 import useRemoveFile from "@/features/channels/api/useRemoveFile";
+import { getFileType } from "@/lib/utils";
+import { BsFillFilePdfFill } from "react-icons/bs";
+import { FaFileAlt } from "react-icons/fa";
+import AttachmentContainer from "./AttachmentContainer";
+import { getAttachmentName } from "@/lib/utils";
 
 export default function Attachment({
   file,
@@ -14,6 +17,12 @@ export default function Attachment({
   onRemove: (file: AttachmentType) => void;
 }) {
   const { mutate: removeFile } = useRemoveFile();
+  const [fileType, setFileType] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fileType = getFileType(file.path);
+    setFileType(fileType);
+  }, [file]);
 
   const handleRemoveFile = () => {
     removeFile(
@@ -22,33 +31,81 @@ export default function Attachment({
         onSuccess: () => {
           onRemove(file);
         },
-      }
+      },
     );
   };
 
+  if (fileType === "image") {
+    return (
+      <AttachmentContainer onRemove={handleRemoveFile}>
+        <ImageAttachment file={file} />
+      </AttachmentContainer>
+    );
+  }
+
+  if (fileType === "pdf") {
+    return (
+      <AttachmentContainer onRemove={handleRemoveFile}>
+        <PDFAttachment file={file} />
+      </AttachmentContainer>
+    );
+  }
+
   return (
-    // TODO: add file type support
-    <div className="w-[64px] h-[64px] relative group">
-      <div className="relative size-[64px]">
-        <Image
-          src={file.publicUrl}
-          alt={file.path.split("/").pop() || ""}
-          className=" object-cover rounded-lg cursor-pointer hover:opacity-80 hover:bg-black/70"
-          fill
-          sizes="100vw 100vh"
+    <AttachmentContainer onRemove={handleRemoveFile}>
+      <FileAttachment file={file} />
+    </AttachmentContainer>
+  );
+}
+
+function PDFAttachment({ file }: { file: AttachmentType }) {
+  return (
+    <div className="flex h-[48px] w-[168px] flex-row rounded-md border border-gray-200">
+      <div className="flex h-[48px] w-[48px] items-center justify-center">
+        <BsFillFilePdfFill
+          style={{ width: "32px", height: "32px" }}
+          className="text-red-500"
         />
       </div>
-      <Hint content="Remove file" side="top">
-        <Button
-          variant="transparent"
-          className="absolute -top-2 -right-2 h-[20px] w-[20px]"
-          onClick={handleRemoveFile}
-        >
-          <div className="absolute right-0 opacity-0 hover:bg-black/100 group-hover:opacity-80 bg-slate-600 rounded-full size-5 flex items-center justify-center cursor-pointer">
-            <XIcon className="size-4 text-white" />
-          </div>
-        </Button>
-      </Hint>
+      <div className="flex w-[120px] flex-col justify-center">
+        <p className="truncate text-sm font-medium">
+          {getAttachmentName(file.path)}
+        </p>
+        <p className="text-xs text-gray-500">PDF</p>
+      </div>
+    </div>
+  );
+}
+
+function ImageAttachment({ file }: { file: AttachmentType }) {
+  return (
+    <div className="relative size-[64px]">
+      <Image
+        src={file.publicUrl}
+        alt={file.path.split("/").pop() || ""}
+        className="cursor-pointer rounded-lg object-cover hover:bg-black/70 hover:opacity-80"
+        fill
+        sizes="100vw 100vh"
+      />
+    </div>
+  );
+}
+
+function FileAttachment({ file }: { file: AttachmentType }) {
+  return (
+    <div className="flex h-[48px] w-[168px] flex-row rounded-md border border-gray-200">
+      <div className="flex h-[48px] w-[48px] items-center justify-center">
+        <FaFileAlt
+          style={{ width: "32px", height: "32px" }}
+          className="text-gray-500"
+        />
+      </div>
+      <div className="flex w-[120px] flex-col justify-center">
+        <p className="truncate text-sm font-medium">
+          {getAttachmentName(file.path)}
+        </p>
+        <p className="text-xs text-gray-500">File</p>
+      </div>
     </div>
   );
 }

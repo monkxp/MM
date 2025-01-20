@@ -1,7 +1,8 @@
 import { Tables } from "./schema";
-import supabase from "./supabaseClient";
-import { genUUIDv4 } from "./utils";
+import { createClient } from "./supabase/client";
+import { genUUIDv4, sanitizeS3Key } from "./utils";
 
+const supabase = createClient();
 export const createWorkspace = async ({
   name,
   userId,
@@ -88,6 +89,7 @@ export const getWorkspace = async (workspaceId: string, userId: string) => {
   const { data: members, error: membersError } = await supabase
     .from("workspace_members")
     .select("*")
+    .eq("workspace_id", workspaceId)
     .eq("user_id", userId);
 
   if (membersError) {
@@ -157,44 +159,6 @@ export const updateWorkspaceName = async (
     throw new Error(error.message);
   }
   return data?.[0];
-};
-
-export const deleteWorkspace = async (workspaceId: string, userId: string) => {
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
-
-  const { data: members, error: memberError } = await supabase
-    .from("workspace_members")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("workspace_id", workspaceId);
-
-  if (memberError) {
-    throw new Error(memberError.message);
-  }
-
-  if (members?.length === 0) {
-    throw new Error("You are not a member of this workspace");
-  }
-
-  if (members?.[0]?.role !== "admin") {
-    throw new Error("You are not an admin of this workspace");
-  }
-  // delete all members of the workspace
-  await supabase
-    .from("workspace_members")
-    .delete()
-    .eq("workspace_id", workspaceId);
-  // delete the workspace
-  const { data, error } = await supabase
-    .from("workspaces")
-    .delete()
-    .eq("id", workspaceId);
-  if (error) {
-    throw new Error(error.message);
-  }
-  return data;
 };
 
 export const getChannels = async (
@@ -314,9 +278,10 @@ export const createMessage = async (
 };
 
 export const uploadFile = async (file: File) => {
+  const filePath = `unused/${genUUIDv4()}.${sanitizeS3Key(file?.name)}`;
   const { data, error } = await supabase.storage
     .from("slack_clone")
-    .upload(`unused/${genUUIDv4()}.${file?.name}`, file);
+    .upload(filePath, file);
 
   if (error) {
     throw new Error(error.message);
@@ -364,4 +329,88 @@ export const getChannelMessages = async (channelId: string) => {
   }
 
   return { data, error };
+};
+
+export const signInWithOAuth = async (provider: string, redirectTo: string) => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: provider as "google" | "github" | "discord",
+    options: {
+      redirectTo,
+    },
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const joinWorkspace = async (
+  joinCode: string,
+  workspaceId: string,
+  userId: string,
+) => {
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const { data: workspaces, error: workspaceError } = await supabase
+    .from("workspaces")
+    .select("*")
+    .eq("id", workspaceId);
+
+  const workspace = workspaces?.[0];
+
+  if (workspaceError) {
+    throw new Error(workspaceError.message);
+  }
+
+  if (!workspace) {
+    throw new Error("Workspace not found");
+  }
+
+  if (workspace.join_code !== joinCode) {
+    throw new Error("Invalid join code");
+  }
+
+  const existingMember = await getWorkspaceMember(workspaceId, userId);
+
+  if (existingMember) {
+    throw new Error("You are already a member of this workspace");
+  }
+
+  const { data, error } = await supabase.from("workspace_members").insert({
+    user_id: userId,
+    workspace_id: workspaceId,
+    role: "member",
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+// get workspace info by auth user
+export const getWorkspaceInfo = async (workspaceId: string) => {
+  const user = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from("workspaces")
+    .select("*")
+    .eq("id", workspaceId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if (!data?.[0]) {
+    return null;
+  }
+
+  return data;
 };

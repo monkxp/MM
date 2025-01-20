@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import supabase from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase/client";
 import { Tables } from "@/lib/schema";
 import { RealtimeChannel } from "@supabase/supabase-js";
 
@@ -13,7 +13,7 @@ const useChannelMessageChange = (channelId: string) => {
 
   useEffect(() => {
     if (!channelId) return;
-
+    const supabase = createClient();
     let messageSubscription: RealtimeChannel;
 
     try {

@@ -20,7 +20,7 @@ export default function MessageItem({
     content = JSON.parse(message.content as string);
   }
   return (
-    <div className="flex flex-row gap-4">
+    <div className="group flex flex-row gap-4 px-6 py-2 hover:bg-gray-100">
       {showHeader && (
         <div className="h-10 w-10 flex-shrink-0">
           <Avatar className="size-10 cursor-pointer transition hover:opacity-80">
@@ -31,13 +31,18 @@ export default function MessageItem({
           </Avatar>
         </div>
       )}
-      <div className={`flex-1 ${!showHeader && "ml-14"}`}>
+      <div className={`relative flex-1 ${!showHeader && "ml-14"}`}>
         {showHeader && (
           <div className="flex items-baseline gap-2">
             <span className="font-semibold">{user?.user_metadata?.name}</span>
             <span className="text-xs text-slate-500">
               {formatTime(new Date(message.created_at))}
             </span>
+          </div>
+        )}
+        {!showHeader && (
+          <div className="invisible absolute -left-11 bottom-0 top-0 my-auto h-fit text-xs text-gray-500 group-hover:visible">
+            {formatTime(new Date(message.created_at)).replace(/\s[AP]M/, "")}
           </div>
         )}
         <div className="text-sm text-slate-500">

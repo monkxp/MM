@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown, SquarePen } from "lucide-react";
 import Hint from "@/components/Hint";
+import InviteDialog from "./InviteDialog";
 import PreferencesDialog from "./PreferencesDialog";
 export default function ChannelSideBarHeader({
   workspace,
@@ -19,6 +20,7 @@ export default function ChannelSideBarHeader({
   isAdmin: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
   return (
     <div className="flex h-[49px] items-center justify-between px-4 py-2">
       <DropdownMenu>
@@ -49,7 +51,7 @@ export default function ChannelSideBarHeader({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer py-2 capitalize"
-                onClick={() => {}}
+                onClick={() => setIsInviteOpen(true)}
               >
                 invite to {workspace.name}
               </DropdownMenuItem>
@@ -82,6 +84,12 @@ export default function ChannelSideBarHeader({
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         workspace={workspace}
+      />
+      <InviteDialog
+        open={isInviteOpen}
+        setOpen={setIsInviteOpen}
+        name={workspace.name}
+        joinCode={workspace.join_code}
       />
     </div>
   );

@@ -67,3 +67,45 @@ export function getDaySuffix(day: number): string {
       return "th";
   }
 }
+
+export function getAttachmentName(path: string) {
+  return path.split("/").pop()?.split(".")[1];
+}
+
+export const sanitizeS3Key = (filename: string): string => {
+  return filename
+    .replace(/[^a-zA-Z0-9-_\.]/g, "-") // Replace unsafe chars with hyphen
+    .replace(/\s+/g, "-") // Replace spaces with hyphen
+    .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+    .toLowerCase(); // Convert to lowercase
+};
+
+export function getFileType(path: string) {
+  const fileType = path.split(".").pop();
+  switch (fileType) {
+    case "jpg":
+    case "jpeg":
+    case "png":
+    case "gif":
+    case "bmp":
+    case "tiff":
+    case "ico":
+    case "webp":
+      return "image";
+    // case "mp4":
+    // case "avi":
+    // case "mov":
+    // case "wmv":
+    // case "flv":
+    //   return "video";
+    // case "mp3":
+    // case "wav":
+    // case "ogg":
+    // case "aac":
+    //   return "audio";
+    case "pdf":
+      return "pdf";
+    default:
+      return "file";
+  }
+}

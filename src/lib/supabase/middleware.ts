@@ -53,11 +53,11 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith(route),
   );
 
-  console.log({
-    path: request.nextUrl.pathname,
-    isPublicRoute,
-    hasUser: !!user,
-  });
+  // console.log({
+  //   path: request.nextUrl.pathname,
+  //   isPublicRoute,
+  //   hasUser: !!user,
+  // });
 
   // Allow access to public routes
   if (isPublicRoute) {

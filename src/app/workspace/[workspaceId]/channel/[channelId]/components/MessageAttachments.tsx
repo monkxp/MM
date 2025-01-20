@@ -3,16 +3,14 @@ import Image from "next/image";
 import { ImageIcon, FileIcon } from "lucide-react";
 import { BsFillFilePdfFill } from "react-icons/bs";
 import { useState } from "react";
+import { getAttachmentName } from "@/lib/utils";
+import PDFPreview from "./PDFPreview";
 
 type Attachment = {
   id: string;
   path: string;
   publicUrl: string;
 };
-
-function getAttachmentName(path: string) {
-  return path.split("/").pop()?.split(".")[1];
-}
 
 export default function MessageAttachments({
   attachments,
@@ -25,7 +23,7 @@ export default function MessageAttachments({
     <div className="mt-2 flex flex-col gap-2">
       {attachments.map((attachment: Attachment) => (
         <div key={attachment.id} className="max-w-[320px]">
-          <div className="mb-1 flex items-center gap-1 text-sm text-gray-500">
+          <div className="mb-1 flex items-center gap-1 truncate text-sm text-gray-500">
             {getAttachmentName(attachment.path)}
           </div>
 
@@ -80,12 +78,15 @@ function PreviewableFile({ attachment }: { attachment: Attachment }) {
   if (attachment.path.endsWith(".pdf")) {
     return (
       <div className="overflow-hidden rounded-lg border border-gray-200">
-        <div className="bg-red-50 p-4">
+        <div className="flex flex-row items-center justify-start gap-2 bg-gray-50 p-4">
           <BsFillFilePdfFill className="h-8 w-8 text-red-500" />
+          <p className="truncate text-sm font-medium">
+            {getAttachmentName(attachment.path)}
+          </p>
         </div>
         <div className="bg-white p-3">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">PDF</span>
+            <PDFPreview url={attachment.publicUrl} />
           </div>
         </div>
       </div>

@@ -1,99 +1,64 @@
 "use client";
 
-import { useState } from "react";
-import { AuthFlow } from "@/app/(auth-pages)/types";
-import { useRouter } from "next/navigation";
-import { FaGithub } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Session, WeakPassword } from "@supabase/supabase-js";
-import { User } from "@supabase/supabase-js";
-import { createClient } from "@/lib/supabase/client";
-import { signInAction } from "@/app/(auth-pages)/actions";
-export default function SignInCard({
-  setFlow,
-  signIn,
-}: {
-  setFlow: (flow: AuthFlow) => void;
-  signIn: (
-    email: string,
-    password: string,
-  ) => Promise<
-    | {
-        user: User;
-        session: Session;
-        weakPassword?: WeakPassword;
-      }
-    | undefined
-  >;
-  signInWithGithub: () => Promise<void>;
-}) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const supabase = createClient();
+import { useActionState } from "react";
 
-  const handleAuth = async () => {
-    try {
-      setLoading(true);
-      await signIn(email, password);
-      router.push("/");
-    } catch (error) {
-      setError(`Failed to authenticate: ${error}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const handleGithubSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { signInAction } from "@/lib/actions";
+import { FaGithub } from "react-icons/fa";
+import useSigninWithOAuth from "@/app/(auth-pages)/api/useSigninWithOAuth";
+import { useRouter } from "next/navigation";
+export default function SignInCard() {
+  const [state, formAction, isPending] = useActionState(signInAction, null);
+
+  const { mutate: signInWithOAuth } = useSigninWithOAuth();
+
+  const handleSignInWithGithub = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    await supabase.auth.signInWithOAuth({
+    signInWithOAuth({
       provider: "github",
-      options: {
-        redirectTo: `${location.origin}/auth/callback`,
-      },
+      redirectTo: `${window.location.origin}/auth/callback`,
     });
   };
 
+  const router = useRouter();
+
+  console.log("state:", state);
+  console.log("isPending:", isPending);
+  const loading = isPending;
   return (
-    <form>
+    <form action={formAction}>
       <Card className="h-full w-full p-8">
         <CardHeader className="px-0 pt-0">
           <CardTitle>Sign In</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 px-0 pb-0">
           <Input
+            id="email"
+            name="email"
             disabled={loading}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             type="email"
             placeholder="Email"
             required
           />
           <Input
+            id="password"
+            name="password"
             disabled={loading}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             type="password"
             placeholder="Password"
             required
           />
-          {error && <p className="text-red-500">{error}</p>}
-          <Button
-            className="w-full"
-            size="lg"
-            disabled={loading}
-            formAction={signInAction}
-          >
+          {state?.message && <p className="text-red-500">{state.message}</p>}
+          <Button className="w-full" size="lg" disabled={loading}>
             {loading ? "Signing In..." : "Sign In"}
           </Button>
           <Button
             className="relative w-full"
             size="lg"
             disabled={loading}
-            onClick={handleGithubSignIn}
+            onClick={handleSignInWithGithub}
             variant="outline"
           >
             <FaGithub className="absolute left-3 top-3 mr-2 h-4 w-4" />
@@ -103,7 +68,7 @@ export default function SignInCard({
             Don&apos;t have an account?{" "}
             <span
               className="cursor-pointer text-sky-500 hover:underline"
-              onClick={() => setFlow({ flow: "signup" })}
+              onClick={() => router.push("/signup")}
             >
               Sign up
             </span>

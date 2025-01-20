@@ -15,7 +15,7 @@ export default function UserButton() {
   const router = useRouter();
   const logout = async () => {
     await signOut();
-    router.push("/auth");
+    router.push("/signin");
   };
   return (
     <DropdownMenu>

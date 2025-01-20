@@ -48,7 +48,7 @@ export default function ToolBar({
             >
               <PlusIcon
                 style={{ width: "1.5rem", height: "1.5rem" }}
-                className="bg-gray-200 rounded-full m-0 "
+                className="m-0 rounded-full bg-gray-200"
               />
             </Button>
           </span>
@@ -57,9 +57,9 @@ export default function ToolBar({
           <Button
             variant="transparent"
             className={cn(
-              "bg-green-500 hover:bg-green-600 w-12 h-[28px] mr-2",
+              "mr-2 h-[28px] w-12 bg-green-500 hover:bg-green-600",
               message.length === 0 &&
-                "bg-transparent hover:bg-transparent cursor-default"
+                "cursor-default bg-transparent hover:bg-transparent",
             )}
             onClick={onSend}
           >

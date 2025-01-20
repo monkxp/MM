@@ -32,7 +32,7 @@ export default function PreferencesDialog({
 
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete workspace",
-    "Are you sure you want to delete this workspace?"
+    "Are you sure you want to delete this workspace?",
   );
 
   const handleUpdate = async () => {
@@ -49,34 +49,38 @@ export default function PreferencesDialog({
         onError: (error) => {
           toast.error(error.message);
         },
-      }
+      },
     );
   };
   const handleDelete = async () => {
     const isDelete = await confirm();
     if (!isDelete) return;
-    await delWorkspace(workspace.id, {
-      onSuccess: () => {
-        toast.success("Workspace deleted");
-        setIsOpen(false);
-        router.replace("/");
+
+    await delWorkspace(
+      { workspaceId: workspace.id },
+      {
+        onSuccess: () => {
+          toast.success("Workspace deleted");
+          setIsOpen(false);
+          router.replace("/");
+        },
+        onError: () => {
+          toast.error("Error deleting workspace");
+        },
       },
-      onError: (error) => {
-        toast.error(error.message);
-      },
-    });
+    );
   };
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="bg-gray-100 p-0">
-          <DialogHeader className="p-3 border-b bg-white rounded-md">
+          <DialogHeader className="rounded-md border-b bg-white p-3">
             <DialogTitle>Preferences</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
-          <div className=" px-3  flex flex-col">
-            <div className="px-4 py-3 bg-white rounded-md border hover:bg-gray-50 cursor-pointer">
+          <div className="flex flex-col px-3">
+            <div className="cursor-pointer rounded-md border bg-white px-4 py-3 hover:bg-gray-50">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium">Workspace name</p>
                 <Button
@@ -88,7 +92,7 @@ export default function PreferencesDialog({
                   Change
                 </Button>
               </div>
-              <p className="text-sm mt-2">
+              <p className="mt-2 text-sm">
                 <Input
                   className="w-full"
                   value={name}
@@ -97,14 +101,14 @@ export default function PreferencesDialog({
               </p>
             </div>
             <button
-              className="flex items-center justify-start my-3 gap-x-2 px-4 py-3 bg-white rounded-md border cursor-pointer text-rose-500 hover:bg-gray-50"
+              className="my-3 flex cursor-pointer items-center justify-start gap-x-2 rounded-md border bg-white px-4 py-3 text-rose-500 hover:bg-gray-50"
               onClick={handleDelete}
               disabled={isPendingDelete}
             >
               {isPendingDelete && (
                 <Loader className="size-4 animate-spin text-rose-500" />
               )}
-              <Trash className="size-4  " />
+              <Trash className="size-4" />
               <p className="text-sm font-semibold">Delete workspace</p>
             </button>
           </div>

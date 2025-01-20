@@ -15,7 +15,7 @@ export default function MessageGroup({ messages }: { messages: Message[] }) {
     );
   };
   return (
-    <div className="flex flex-col gap-2 px-4">
+    <div className="flex flex-col">
       {messages.map((message, index) => (
         <MessageItem
           key={message.id}

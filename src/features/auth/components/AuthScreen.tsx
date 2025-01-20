@@ -20,11 +20,7 @@ export default function AuthScreen() {
     <div className="flex h-screen items-center justify-center bg-[#5c3B58]">
       <div className="md:h-auto md:w-[400px]">
         {flow.flow === "signin" ? (
-          <SignInCard
-            setFlow={setFlow}
-            signIn={signIn}
-            signInWithGithub={signInWithGithub}
-          />
+          <SignInCard />
         ) : (
           <SignUpCard setFlow={setFlow} signUp={signUp} />
         )}
