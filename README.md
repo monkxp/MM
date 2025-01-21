@@ -16,7 +16,7 @@ Build a slack like app use next.js supabase, Tailwind shadcn/ui, MDXEditor as a 
 - [x] Invite user to workspace
 - [x] Real time communication
 - [x] Shadcn UI & Tailwind CSS
-- [x] Framework Next.js 14
+- [x] Framework Next.js 15
 
 ## Todo
 
