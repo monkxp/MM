@@ -7,17 +7,17 @@ export default function ToolBar() {
   const workspaceId = useWorkspaceId();
   const { data } = useGetWorkspace(workspaceId);
   return (
-    <nav className="bg-[#481349] flex items-center justify-between h-10 text-white p-1.5">
-      <div className="flex-1" />
-      <div className="min-w-[300px] max-w-[600px] grow-[2] shrink">
+    <nav className="flex h-10 items-center justify-between bg-[#481349] p-1.5 text-white">
+      <div className="max-w-[370px] flex-1" />
+      <div className="min-w-[300px] max-w-[600px] shrink grow-[2]">
         <Button variant="transparent" className="flex items-center gap-2">
-          <Search className="size-4 text-white mr-2" />
+          <Search className="mr-2 size-4 text-white" />
           <span className="text-sm text-white">Search {data?.name}</span>
         </Button>
       </div>
-      <div className="flex-1 ml-auto flex items-center justify-end">
+      <div className="ml-auto flex flex-1 items-center justify-end">
         <Button variant="transparent" className="flex items-center gap-2">
-          <Info className="size-4 text-white mr-2" />
+          <Info className="mr-2 size-4 text-white" />
         </Button>
       </div>
     </nav>
