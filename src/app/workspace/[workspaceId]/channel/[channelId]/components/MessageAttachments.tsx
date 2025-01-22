@@ -22,7 +22,10 @@ export default function MessageAttachments({
   return (
     <div className="mt-2 flex flex-col gap-2">
       {attachments.map((attachment: Attachment) => (
-        <div key={attachment.id} className="max-w-[320px]">
+        <div
+          key={attachment.id}
+          className="max-h-[320px] max-w-[480px] overflow-y-auto"
+        >
           <div className="mb-1 flex items-center gap-1 truncate text-sm text-gray-500">
             {getAttachmentName(attachment.path)}
           </div>

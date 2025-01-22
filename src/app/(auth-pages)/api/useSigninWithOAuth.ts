@@ -1,5 +1,5 @@
 import useMutation from "@/app/hooks/useMutation";
-import { signInWithOAuth } from "@/lib/db";
+import { signInWithOAuth } from "@/lib/db/db";
 
 const useSigninWithOAuth = () => {
   return useMutation({

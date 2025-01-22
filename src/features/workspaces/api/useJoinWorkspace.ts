@@ -1,4 +1,4 @@
-import { joinWorkspace } from "@/lib/db";
+import { joinWorkspace } from "@/lib/db/db";
 import useMutation from "@/app/hooks/useMutation";
 import { useAuth, AuthContextType } from "@/contexts/AuthContext";
 

@@ -1,5 +1,5 @@
 import { useAuth, AuthContextType } from "@/contexts/AuthContext";
-import { getWorkspace } from "@/lib/db";
+import { getWorkspace } from "@/lib/db/db";
 import useQuery from "@/app/hooks/useQuery";
 
 export const useGetWorkspace = (workspaceId: string) => {

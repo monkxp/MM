@@ -1,5 +1,5 @@
 import useQuery from "@/app/hooks/useQuery";
-import { getChannelMessages } from "@/lib/db";
+import { getChannelMessages } from "@/lib/db/db";
 
 export const useGetChannelMessage = (channelId: string) => {
   return useQuery({

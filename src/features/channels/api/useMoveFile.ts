@@ -1,5 +1,5 @@
 import useMutation from "@/app/hooks/useMutation";
-import { moveFile } from "@/lib/db";
+import { moveFile } from "@/lib/db/db";
 
 export const useMoveFile = () => {
   return useMutation({

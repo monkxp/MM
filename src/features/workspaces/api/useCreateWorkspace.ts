@@ -1,4 +1,4 @@
-import { createWorkspace } from "@/lib/db";
+import { createWorkspace } from "@/lib/db/db";
 import useMutation from "@/app/hooks/useMutation";
 
 interface UseCreateWorkspaceProps {

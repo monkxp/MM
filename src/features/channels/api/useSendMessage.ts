@@ -1,5 +1,5 @@
 import { AuthContextType, useAuth } from "@/contexts/AuthContext";
-import { createMessage } from "@/lib/db";
+import { createMessage } from "@/lib/db/db";
 
 import useMutation from "@/app/hooks/useMutation";
 

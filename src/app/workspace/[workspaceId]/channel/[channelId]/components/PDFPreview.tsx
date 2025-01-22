@@ -4,12 +4,18 @@ import { useEffect, useRef } from "react";
 import type { RenderTask } from "pdfjs-dist";
 import * as pdfjs from "pdfjs-dist";
 
+// Set up the worker.
+pdfjs.GlobalWorkerOptions.workerSrc =
+  window.location.origin + "/pdf.worker.min.mjs";
+
 const PDFViewer = ({ url }: { url: string }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   //   const containerRef = useRef<HTMLDivElement>(null);
   const renderTaskRef = useRef<RenderTask | null>(null);
 
   useEffect(() => {
+    if (!url) return;
+
     let isCancelled = false;
 
     const renderPDF = async () => {
@@ -24,16 +30,12 @@ const PDFViewer = ({ url }: { url: string }) => {
       }
 
       try {
-        // Set up the worker.
-        pdfjs.GlobalWorkerOptions.workerSrc =
-          window.location.origin + "/pdf.worker.min.mjs";
-
         // Load the PDF document.
         const pdf = await pdfjs.getDocument(url).promise;
 
         // Get the first page.
         const page = await pdf.getPage(1);
-        const viewport = page.getViewport({ scale: 1.5 });
+        const viewport = page.getViewport({ scale: 1 });
 
         // Set canvas dimensions
         canvas.height = viewport.height;
@@ -54,10 +56,6 @@ const PDFViewer = ({ url }: { url: string }) => {
         renderTaskRef.current = renderTask;
 
         await renderTask.promise;
-
-        if (!isCancelled) {
-          console.log("Rendering completed");
-        }
       } catch (error) {
         if (error instanceof Error) {
           if (error.name === "RenderingCancelledException") {
@@ -78,7 +76,7 @@ const PDFViewer = ({ url }: { url: string }) => {
       }
     };
   }, [url]);
-  return <canvas ref={canvasRef} className="max-h-48 w-full" />;
+  return <canvas ref={canvasRef} className="h-full w-full overflow-y-auto" />;
 };
 
 export default PDFViewer;

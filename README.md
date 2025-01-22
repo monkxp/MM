@@ -16,14 +16,14 @@ Build a slack like app use next.js supabase, Tailwind shadcn/ui, MDXEditor as a 
 - [x] Invite user to workspace
 - [x] Real time communication
 - [x] Shadcn UI & Tailwind CSS
-- [x] Framework Next.js 15
+- [x] Framework Next.js 15、
+- [x] Delete message
+- [x] Edit message
 
 ## Todo
 
 - [ ] Reactions to messages
 - [ ] Threads / Replies system
-- [ ] Editing messages
-- [ ] Deleting messages
 - [ ] Direct messaging
 - [ ] User profiles
 

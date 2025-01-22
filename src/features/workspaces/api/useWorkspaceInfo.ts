@@ -1,5 +1,5 @@
 import useQuery from "@/app/hooks/useQuery";
-import { getWorkspaceInfo } from "@/lib/db";
+import { getWorkspaceInfo } from "@/lib/db/db";
 
 export const useWorkspaceInfo = (workspaceId: string) => {
   return useQuery({
