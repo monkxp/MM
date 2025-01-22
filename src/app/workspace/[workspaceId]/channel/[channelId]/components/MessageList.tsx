@@ -40,9 +40,9 @@ export default function MessageList() {
   const { type, message, error } = useChannelMessageChange(channelId);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  console.log("newMessageArrived :", newMessageArrived);
 
   const handleUpdateMessage = (message: Tables<"messages">) => {
-    console.log("message :", message);
     setNewMessageArrived(true);
     setMessages((prevMessages) =>
       prevMessages.map((msg) =>
