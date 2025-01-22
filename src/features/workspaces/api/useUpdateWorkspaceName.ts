@@ -1,5 +1,5 @@
 import { useAuth, AuthContextType } from "@/contexts/AuthContext";
-import { updateWorkspaceName } from "@/lib/db";
+import { updateWorkspaceName } from "@/lib/db/db";
 import useMutation from "@/app/hooks/useMutation";
 
 interface UseUpdateWorkspaceNameProps {

@@ -41,6 +41,24 @@ export default function MessageList() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const handleUpdateMessage = (message: Tables<"messages">) => {
+    console.log("message :", message);
+    setNewMessageArrived(true);
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.id === message.id
+          ? { ...msg, content: message.content, is_edited: true }
+          : msg,
+      ),
+    );
+  };
+
+  const handleDeleteMessage = (messageId: string) => {
+    setMessages((prevMessages) =>
+      prevMessages.filter((msg) => msg.id !== messageId),
+    );
+  };
+
   const handleScroll = () => {
     if (scrollRef.current) {
       setTimeout(() => {
@@ -101,7 +119,11 @@ export default function MessageList() {
               </div>
             </div>
           </div>
-          <MessageGroup messages={group.messages} />
+          <MessageGroup
+            messages={group.messages}
+            updateMessages={handleUpdateMessage}
+            deleteMessage={handleDeleteMessage}
+          />
         </div>
       ))}
     </div>

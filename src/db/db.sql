@@ -40,6 +40,7 @@ CREATE TABLE public.messages (
 	user_id uuid NULL,
 	"content" jsonb NULL,
 	created_at timestamptz DEFAULT now() NOT NULL,
+	is_edited bool DEFAULT false NULL,
 	CONSTRAINT messages_pkey PRIMARY KEY (id)
 );
 

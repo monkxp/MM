@@ -1,5 +1,5 @@
 import { AuthContextType, useAuth } from "@/contexts/AuthContext";
-import { getChannels } from "@/lib/db";
+import { getChannels } from "@/lib/db/db";
 import useQuery from "@/app/hooks/useQuery";
 
 const useGetChannels = (workspaceId: string) => {
