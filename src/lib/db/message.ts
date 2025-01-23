@@ -143,3 +143,55 @@ export const deleteMessage = async (messageId: string) => {
 
   return deletedData;
 };
+
+export const addEmojiToMessage = async (
+  messageId: string,
+  workspaceId: string,
+  userId: string,
+  emoji: string,
+) => {
+  if(!userId){
+    throw new Error("Unauthorized");
+  }
+
+  const {data} = await supabase
+  .from("workspace_members")
+  .select("*")
+  .eq("workspace_id", workspaceId)
+  .eq("user_id", userId);
+
+  if(!data){
+    throw new Error("Unauthorized");
+  } 
+
+  const {data: messageData} = await supabase.from("messages").select("*").eq("id", messageId);
+
+  if(!messageData){
+    throw new Error("Message not found");
+  }
+  const {data: emojiData} = await supabase
+  .from("reactions")
+  .select("*")
+  .eq("message_id", messageId)
+  .eq("reaction", emoji)
+  .eq("user_id", userId);
+  let reactionData = null;
+  if(emojiData && emojiData.length > 0){
+    await supabase.from("reactions").delete().eq("id", emojiData[0].id);
+  }else {
+    const {data: newEmojiData} =  await supabase
+    .from("reactions")
+    .insert({message_id: messageId, reaction: emoji, user_id: userId})
+    .select("*");
+    reactionData = newEmojiData;
+  }
+  return reactionData;
+};
+
+export const getEmojis = async (messageId: string) => {
+  const {data, error} = await supabase.from("reactions").select("*").eq("message_id", messageId);
+  if(error){
+    throw new Error(error.message);
+  }
+  return data;
+};
