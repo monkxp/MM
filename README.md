@@ -19,10 +19,10 @@ Build a slack like app use next.js supabase, Tailwind shadcn/ui, MDXEditor as a 
 - [x] Framework Next.js 15、
 - [x] Delete message
 - [x] Edit message
+- [x] Reactions to messages
 
 ## Todo
 
-- [ ] Reactions to messages
 - [ ] Threads / Replies system
 - [ ] Direct messaging
 - [ ] User profiles
