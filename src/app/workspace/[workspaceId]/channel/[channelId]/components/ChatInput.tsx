@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import Editer from "./Editer";
 import ToolBar, { AttachmentType } from "./ToolBar";
@@ -6,6 +6,7 @@ import { useUploadFile } from "@/features/channels/api/useUploadFile";
 import { useSendMessage } from "@/features/channels/api/useSendMessage";
 import { useRemoveFile } from "@/features/channels/api/useRemoveFile";
 import useChannelId from "@/app/hooks/useChannelId";
+import { MDXEditorMethods } from "@mdxeditor/editor";
 
 export type MessageType = {
   message: string;
@@ -15,11 +16,15 @@ export type MessageType = {
 export default function ChatInput() {
   const [message, setMessage] = useState("");
   const [uploadFiles, setUploadFiles] = useState<AttachmentType[]>([]);
-
+  const editorRef = useRef<MDXEditorMethods | null>(null);
   const { mutate: uploadFile } = useUploadFile();
   const { mutate: sendMessage } = useSendMessage();
   const channelId = useChannelId();
   const { mutate: removeFile } = useRemoveFile();
+
+   const setEditorRef = (ref: MDXEditorMethods | null) => {
+    editorRef.current = ref;
+  };
 
   const handleSendMessage = () => {
     const content: MessageType = {
@@ -73,14 +78,22 @@ export default function ChatInput() {
     );
   };
 
+  const handleEmojiSelect = (emoji: any) => {
+    console.log(emoji);
+    editorRef.current?.focus();
+    editorRef.current?.insertMarkdown(`${emoji.native}`);
+  };
+
   return (
     <div>
       <Editer
         markdown={message}
         onChange={setMessage}
         onSend={handleSendMessage}
+        setEditorRef={setEditorRef}
       />
       <ToolBar
+        onEmojiSelect={handleEmojiSelect}
         uploadFiles={uploadFiles}
         message={message}
         handleRemoveFile={handleRemoveFile}

@@ -125,6 +125,35 @@ export type Database = {
           },
         ];
       };
+      reactions: {
+        Row: {
+          created_at: string
+          id: number
+          message_id: string | null
+          reaction: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          message_id?: string | null
+          reaction: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          message_id?: string | null
+          reaction?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reactions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      };
       workspace_members: {
         Row: {
           created_at: string;
