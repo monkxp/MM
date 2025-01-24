@@ -1,10 +1,13 @@
 import Image from "next/image";
+import { useToggle } from "react-use";
 
 import { ImageIcon, FileIcon } from "lucide-react";
 import { BsFillFilePdfFill } from "react-icons/bs";
 import { useState } from "react";
-import { getAttachmentName } from "@/lib/utils";
+import { cn, getAttachmentName } from "@/lib/utils";
 import PDFPreview from "./PDFPreview";
+import { Button } from "@/components/ui/button";
+import { FaCaretDown } from "react-icons/fa";
 
 type Attachment = {
   id: string;
@@ -17,6 +20,7 @@ export default function MessageAttachments({
 }: {
   attachments: any;
 }) {
+  const [isOpen, toggleOpen] = useToggle(true);
   if (!attachments?.length) return null;
 
   return (
@@ -27,12 +31,23 @@ export default function MessageAttachments({
           className="max-h-[320px] max-w-[480px] overflow-y-auto"
         >
           <div className="mb-1 flex items-center gap-1 truncate text-sm text-gray-500">
-            {getAttachmentName(attachment.path)}
+           <Button
+          variant="transparent"
+          className="size-6 shrink-0 p-0.5 text-sm text-slate-500"
+          onClick={toggleOpen}
+        >
+          <FaCaretDown
+            className={cn(
+              "mr-1 size-4 shrink-0 transition-transform",
+              !isOpen && "-rotate-90",
+            )}
+          />
+        </Button> {getAttachmentName(attachment.path)} 
           </div>
-
-          <a
-            href={attachment.publicUrl}
-            target="_blank"
+          {isOpen && (
+            <a
+              href={attachment.publicUrl}
+              target="_blank"
             rel="noopener noreferrer"
             className="block"
           >
@@ -40,8 +55,9 @@ export default function MessageAttachments({
               <PreviewableFile attachment={attachment} />
             ) : (
               <NonPreviewableFile attachment={attachment} />
-            )}
-          </a>
+              )}
+            </a>
+          )}
         </div>
       ))}
     </div>

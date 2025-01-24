@@ -11,13 +11,20 @@ export default function MessageGroup({
   messages,
   updateMessages,
   deleteMessage,
+  threadCount,
 }: {
   messages: Message[];
   updateMessages: (messages: Message) => void;
   deleteMessage: (messageId: string) => void;
+  threadCount?: {id: string, count: number}[];
 }) {
   const [editMessageId, setEditMessageId] = useState<string | null>(null);
   const shouldShowHeader = (currentMsg: Message, prevMsg: Message | null) => {
+    if(threadCount){
+      const counts = threadCount.find(thread => thread.id === currentMsg.id);
+      if(counts && counts.count > 0) return true;
+    }
+
     if (!prevMsg) return true;
     const timeDiff =
       new Date(currentMsg.created_at).getTime() -
@@ -47,6 +54,7 @@ export default function MessageGroup({
             showHeader={shouldShowHeader(message, messages[index - 1])}
             setEditMessageId={setEditMessageId}
             deleteMessageById={deleteMessage}
+            threadCount={threadCount}
           />
         );
       })}

@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
     ],
   },
   reactStrictMode: true,
+  experimental: {
+    clientRouterFilter: true,
+  },
 
   webpack: (config) => {
     config.resolve.alias.canvas = false;

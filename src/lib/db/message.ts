@@ -7,7 +7,9 @@ export const createMessage = async (
   channelId: string,
   userId: string,
   content: string,
+  parentId?: string,
 ) => {
+  
   const contentObj = JSON.parse(content as string);
   if (contentObj.attachments) {
     for (const attachment of contentObj.attachments) {
@@ -36,6 +38,7 @@ export const createMessage = async (
       channel_id: channelId,
       user_id: userId,
       content: JSON.stringify(contentObj),
+      parent_id: parentId,
     })
     .select("*");
 
@@ -92,13 +95,18 @@ export const getChannelMessages = async (channelId: string) => {
     .from("messages")
     .select("*")
     .eq("channel_id", channelId)
+    .is("parent_id", null)
     .order("created_at", { ascending: true });
 
   if (error) {
     return { data: [], error };
   }
-
-  return { data, error };
+  let threadCount = [];
+  for(const message of data){
+    const res = await getThreadMessages(message.id);
+    threadCount.push({id: message.id, count: res?.count || 0});
+  }
+  return { data, error, threadCount };
 };
 
 export const updateMessage = async (messageId: string, content: string) => {
@@ -194,4 +202,38 @@ export const getEmojis = async (messageId: string) => {
     throw new Error(error.message);
   }
   return data;
+};
+
+export const getMessageById = async (messageId: string) => {
+  if(!messageId){
+    return null;
+  }
+   const currentUser = await supabase.auth.getUser();
+   if(!currentUser.data.user){
+     return null;
+   }
+
+  const {data, error} = await supabase.from("messages").select("*").eq("id", messageId);
+  if(error){
+    return null;
+  }
+  return data;
+};
+
+export const getThreadMessages = async (messageId: string) => {
+  if(!messageId){
+    return null;
+  }
+   const currentUser = await supabase.auth.getUser();
+   if(!currentUser.data.user){
+     return null;
+   }
+
+  const {data, error, count} = await supabase.from("messages").select("*",{count: "exact"}).eq("parent_id", messageId);
+  if(error){
+    return null;
+  }
+
+
+  return {data, count};
 };

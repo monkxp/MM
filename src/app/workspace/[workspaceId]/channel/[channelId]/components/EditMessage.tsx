@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useGetUser from "@/app/(auth-pages)/api/useUser";
 import Editer from "./Editer";
 import { useState } from "react";
-import { useUpdateMessage } from "@/features/channels/api/useUpdateMessage";
+import { useUpdateMessage } from "@/features/message/api/useUpdateMessage";
 import { toast } from "sonner";
 
 export default function EditMessage({
@@ -49,7 +49,7 @@ export default function EditMessage({
   };
 
   return (
-    <div className="group relative flex flex-row gap-4 px-6 py-2 hover:bg-gray-100">
+    <div className="group  flex flex-row gap-4 px-6 py-2">
       {showHeader && (
         <div className="h-10 w-10 flex-shrink-0">
           <Avatar className="size-10 cursor-pointer transition hover:opacity-80">
@@ -63,7 +63,7 @@ export default function EditMessage({
       <div
         className={`relative flex-1 rounded-md border p-2 ${!showHeader && "ml-14"}`}
       >
-        <Editer markdown={markdown} onChange={setMarkdown} onSend={() => {}} />
+        <Editer markdown={markdown} onChange={setMarkdown} onSend={() => {}} setEditorRef={() => {}} />
         <div className="flex justify-end gap-2">
           <Button
             size="sm"

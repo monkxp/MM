@@ -6,6 +6,7 @@ import useMutation from "@/app/hooks/useMutation";
 interface UseSendMessageProps {
   channelId: string;
   content: string;
+  parentId?: string;
 }
 
 export const useSendMessage = () => {
@@ -13,6 +14,6 @@ export const useSendMessage = () => {
 
   return useMutation({
     mutateFn: (data: UseSendMessageProps) =>
-      createMessage(data.channelId, user?.id as string, data.content),
+      createMessage(data.channelId, user?.id as string, data.content, data.parentId),
   });
 };
