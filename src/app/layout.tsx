@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Inter } from "next/font/google";
 
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -21,10 +22,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <NuqsAdapter>
         <AuthProvider>
           <Toaster />
-          {children}
-        </AuthProvider>
+            {children}
+          </AuthProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

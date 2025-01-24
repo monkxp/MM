@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MoreHorizontal, SmilePlus } from "lucide-react";
+import { MessageCircleMore, MoreHorizontal, SmilePlus } from "lucide-react";
 import { toast } from "sonner";
 
 import useGetUser from "@/app/(auth-pages)/api/useUser";
@@ -14,23 +14,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useDeleteMessage } from "@/features/channels/api/useDeleteMessage";
-import { useAddEmoji } from "@/features/channels/api/useAddEmoji";
-import { useGetEmojis } from "@/features/channels/api/useGetEmojis";
+import { useDeleteMessage } from "@/features/message/api/useDeleteMessage";
+import { useAddEmoji } from "@/features/message/api/useAddEmoji";
+import { useGetEmojis } from "@/features/message/api/useGetEmojis";
 import useConfirm from "@/app/hooks/useConfirm";
 import EmojiPopover from "./EmojiPopover";
 import { useWorkspaceId } from "@/app/hooks/useWorkspaceId";
+import usePanel from "@/app/hooks/usePanel";
+import { useUser } from "@/app/hooks/useUser";
+import { useRouter } from "next/navigation";
 
 export default function MessageItem({
   message,
   showHeader,
   setEditMessageId,
   deleteMessageById,
+  threadCount,
 }: {
   message: Tables<"messages">;
   showHeader: boolean;
   setEditMessageId: (id: string) => void;
   deleteMessageById: (messageId: string) => void;
+  threadCount?: {id: string, count: number}[];
 }) {
   const [emojis, setEmojis] = useState<any[]>([]);
   const { data: user, isError, isPending } = useGetUser(message.user_id || "");
@@ -38,10 +43,22 @@ export default function MessageItem({
   const { mutate: addEmoji } = useAddEmoji();
   const { data: emojisData } = useGetEmojis(message.id);
   const workspaceId = useWorkspaceId();
+  const { openThread, closeThread, threadId } = usePanel();
+
+  const currentUser = useUser();
+  const router = useRouter();
+
+  const isOwner = currentUser?.id === message.user_id;
+  const isThread = message.parent_id !== null;
+
+  let threadMessageCount = 0;
+  if(threadCount){
+    threadMessageCount = threadCount.find(thread => thread.id === message.id)?.count || 0;
+  }
 
   useEffect(() => {
-    if (emojisData) {
-      setEmojis(emojisData);
+      if (emojisData) {
+        setEmojis(emojisData);
     }
   }, [emojisData]);
 
@@ -100,26 +117,40 @@ export default function MessageItem({
       {
         onSuccess: () => {
           toast.success("Emoji updated");
-          setEmojis(emojis.filter((e: any) => e.reaction !== emoji));
+          setEmojis(
+            (prevEmojis) => 
+              prevEmojis.filter((e: any) => e.reaction !== emoji));
         },
       },
     );
   }
 
+  const handleOpenThread = () => {
+    openThread(message.id);
+  }
+
+
   return (
     <div className="group relative flex flex-row gap-4 px-6 py-2 hover:bg-gray-100">
       <ConfirmDialog />
-      <div className="invisible absolute -top-4 right-4 group-hover:visible">
+      <div className="invisible absolute -top-2 right-4 group-hover:visible">
         <div className="flex flex-row gap-2 border rounded-md p-1 bg-white">
           <EmojiPopover onEmojiSelect={handleEmojiSelect}>
-            <Button size="icon" variant="transparent">
+            <Button  variant="transparent" className="hover:bg-gray-100 p-1">
               <SmilePlus className="size-4 text-gray-500" />
+              <span className="text-slate-500">React</span>
             </Button>
           </EmojiPopover>
-        <div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="transparent">
+          {!isThread && (
+            <Button variant="transparent" onClick={handleOpenThread} className="hover:bg-gray-100 p-1">
+              <MessageCircleMore className="size-4 text-gray-500" />
+              <span className="text-slate-500">Reply</span>
+            </Button>
+          )}
+          {isOwner && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="icon" variant="transparent">
                 <MoreHorizontal className="size-4 text-gray-500" />
               </Button>
             </DropdownMenuTrigger>
@@ -133,14 +164,14 @@ export default function MessageItem({
               <DropdownMenuItem className="cursor-pointer" onClick={handleDelete}>
                 Delete message
                 </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
-      </div>
       </div>
       {showHeader && (
         <div className="h-10 w-10 flex-shrink-0">
-          <Avatar className="size-10 cursor-pointer transition hover:opacity-80">
+          <Avatar className="size-10 rounded-md cursor-pointer transition hover:opacity-80">
             <AvatarImage src={user?.user_metadata?.avatar_url} />
             <AvatarFallback className="bg-[#160616] text-lg text-white">
               {user?.email?.[0].toUpperCase()}
@@ -148,9 +179,9 @@ export default function MessageItem({
           </Avatar>
         </div>
       )}
-      <div className={`relative flex-1 ${!showHeader && "ml-14"}`}>
+      <div className={`flex-1 ${!showHeader && "ml-14"}`}>
         {showHeader && (
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-center gap-2">
             <span className="font-semibold">{user?.user_metadata?.name}</span>
             <span className="text-xs text-slate-500">
               {formatTime(new Date(message.created_at))}
@@ -170,15 +201,43 @@ export default function MessageItem({
             )}
           </div>
           {emojis && emojis.length > 0 && (
-            <div className="flex flex-row gap-1">
+            <div className="flex flex-row gap-1 items-center">
               {emojis.map((emoji) => (
-                <span key={emoji.id} className="text-lg cursor-pointer" onClick={() => handleEmojiClick(emoji.reaction)}>{emoji.reaction}</span>
+                <span 
+                  key={emoji.id} 
+                  className="text-lg cursor-pointer" 
+                  onClick={() => handleEmojiClick(emoji.reaction)}
+                >
+                  {emoji.reaction}
+                </span>
               ))}
+              <EmojiPopover onEmojiSelect={handleEmojiSelect}>
+                <Button 
+                  variant="transparent" 
+                  onClick={handleOpenThread} 
+                className="text-xs text-gray-500 h-[24px] w-[24px] hover:bg-white flex items-center justify-center p-0"
+              >
+                  <SmilePlus className="size-4 text-gray-500" />
+                </Button>
+              </EmojiPopover>
             </div>
           )}
         </div>
         {content?.attachments && (
           <MessageAttachments attachments={content.attachments} />
+        )}
+        {threadMessageCount > 0 && (
+          <Button variant="transparent" onClick={handleOpenThread} className="text-xs text-gray-500 hover:bg-white">
+            <Avatar className="size-5 rounded-md cursor-pointer transition hover:opacity-80">
+            <AvatarImage src={user?.user_metadata?.avatar_url} />
+            <AvatarFallback className="bg-[#160616] text-lg text-white">
+              {user?.email?.[0].toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-xs text-gray-500 hover:underline">
+              {threadMessageCount} replies
+            </span>
+          </Button>
         )}
       </div>
     </div>

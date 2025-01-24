@@ -1,8 +1,8 @@
 import { useLayoutEffect, useEffect, useState, useRef } from "react";
 
 import useChannelId from "@/app/hooks/useChannelId";
-import useChannelMessageChange from "@/features/channels/api/useChannelMessageChange";
-import useGetChannelMessage from "@/features/channels/api/useGetChannelMessage";
+import useChannelMessageChange from "@/features/message/api/useChannelMessageChange";
+import useGetChannelMessage from "@/features/message/api/useGetChannelMessage";
 import { Tables } from "@/lib/schema";
 import { cn, formatDateHeader } from "@/lib/utils";
 import { Loader } from "lucide-react";
@@ -78,9 +78,11 @@ export default function MessageList() {
     }
 
     if (type === "INSERT" && message) {
-      setMessages((prevMessages) => [...prevMessages, message]);
-      setNewMessageArrived(true);
-      handleScroll();
+      if(!message.parent_id){
+        setMessages((prevMessages) => [...prevMessages, message]);
+        setNewMessageArrived(true);
+        handleScroll();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, message, data?.data]);
@@ -122,6 +124,7 @@ export default function MessageList() {
             messages={group.messages}
             updateMessages={handleUpdateMessage}
             deleteMessage={handleDeleteMessage}
+            threadCount={data?.threadCount}
           />
         </div>
       ))}

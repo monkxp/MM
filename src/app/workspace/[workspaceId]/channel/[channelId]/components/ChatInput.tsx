@@ -3,17 +3,18 @@ import { useRef, useState } from "react";
 import Editer from "./Editer";
 import ToolBar, { AttachmentType } from "./ToolBar";
 import { useUploadFile } from "@/features/channels/api/useUploadFile";
-import { useSendMessage } from "@/features/channels/api/useSendMessage";
+import { useSendMessage } from "@/features/message/api/useSendMessage";
 import { useRemoveFile } from "@/features/channels/api/useRemoveFile";
 import useChannelId from "@/app/hooks/useChannelId";
 import { MDXEditorMethods } from "@mdxeditor/editor";
+import { Tables } from "@/lib/schema";
 
 export type MessageType = {
   message: string;
   attachments?: AttachmentType[];
 };
 
-export default function ChatInput() {
+export default function ChatInput({messageId=null, onSendMessage}:{messageId?:string|null, onSendMessage?: (message: Tables<"messages">) => void}) {
   const [message, setMessage] = useState("");
   const [uploadFiles, setUploadFiles] = useState<AttachmentType[]>([]);
   const editorRef = useRef<MDXEditorMethods | null>(null);
@@ -37,12 +38,16 @@ export default function ChatInput() {
       {
         channelId: channelId,
         content: JSON.stringify(content),
+        parentId: messageId,
       },
       {
-        onSuccess: () => {
-          console.log(" message  send success!");
+        onSuccess: (res) => {
+          // console.log("res",res);
           setMessage("");
           setUploadFiles([]);
+          if(onSendMessage){
+            onSendMessage(res[0]);
+          }
         },
       },
     );

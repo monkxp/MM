@@ -99,6 +99,7 @@ export type Database = {
           created_at: string;
           id: string;
           is_edited: boolean;
+          parent_id: string | null;
           user_id: string | null;
         };
         Insert: {
@@ -106,6 +107,7 @@ export type Database = {
           content?: string | null;
           created_at?: string;
           id?: string;
+          parent_id?: string | null;
           user_id?: string | null;
         };
         Update: {
@@ -113,6 +115,7 @@ export type Database = {
           content?: string | null;
           created_at?: string;
           id?: string;
+          parent_id?: string | null;
           user_id?: string | null;
         };
         Relationships: [
@@ -121,6 +124,13 @@ export type Database = {
             columns: ["channel_id"];
             isOneToOne: false;
             referencedRelation: "channels";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "messages_parent_id_fkey";
+            columns: ["parent_id"];
+            isOneToOne: false;
+            referencedRelation: "messages";
             referencedColumns: ["id"];
           },
         ];
